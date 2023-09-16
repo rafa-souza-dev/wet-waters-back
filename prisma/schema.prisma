@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Animal {
+  id                  Int                @id @default(autoincrement())
+  name                String
+  specie_name         String             @unique
+  size                Int
+  conservation_status ConservationStatus
+  ecological_function String
+  url_image           String
+  threat_causes       Threat_cause[]
+
+  @@map("animals")
+}
+
+model Threat_cause {
+  id          Int      @id @default(autoincrement())
+  description String   @unique
+  animals     Animal[]
+
+  @@map("threat_causes")
+}
+
+enum ConservationStatus {
+  EXTINCT
+  EXTINCT_IN_THE_WILD
+  CRITICAL_ENDANGERED
+  ENDANGERED
+  VULNERABLE
+  NEAR_THREATENED
+  LEAST_CONCERN
+  DATA_DEFICIENT
+  NOT_AVALUATED
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  github_id  String   @unique
+  role       EnumRole
+  point      Int
+  avatar_url String?
+  posts      Post[]
+  likes      Like[]
+
+  @@map("users")
+}
+
+enum EnumRole {
+  ADMIN
+  USER
+}
+
+model Post {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String
+  url_image    String?
+  published_at DateTime?
+  user         User      @relation(fields: [user_id], references: [id])
+  user_id      Int
+  likes        Like[]
+
+  @@map("posts")
+}
+
+model Like {
+  user    User @relation(fields: [user_id], references: [id])
+  user_id Int
+  post    Post @relation(fields: [post_id], references: [id])
+  post_id Int
+
+  @@id([user_id, post_id])
+  @@map("likes")
+}

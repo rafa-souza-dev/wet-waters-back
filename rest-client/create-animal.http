@@ -1,0 +1,12 @@
+# find all animals
+POST http://localhost:8080/api/v1/animals  
+Content-Type: application/json
+
+{
+    "name": "test",
+    "specie_name": "test",
+    "size": 10,
+    "conservation_status": "NOT_AVALUATED",
+    "ecological_function": "test",
+    "url_image": "https://github.com/java.png"
+}

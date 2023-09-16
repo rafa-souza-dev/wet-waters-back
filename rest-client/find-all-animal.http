@@ -1,0 +1,4 @@
+# find all animals
+GET http://localhost:8080/api/v1/animals
+Content-Type: application/json
+
