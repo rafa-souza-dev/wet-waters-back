@@ -7,8 +7,10 @@ import fastifyMultipart from "@fastify/multipart";
 import { env } from "./env";
 import { postsRouter } from "./http/posts-routes";
 import { authRoutes } from "./http/auth-router";
+import WebSocket, { WebSocketServer } from 'ws';
 
 const app = fastify()
+const wss = new WebSocketServer({ host: '0.0.0.0', port: 9000 });
 
 app.register(fastifyMultipart, {
     limits: {
@@ -61,4 +63,21 @@ app.setErrorHandler((error, _, res) => {
 app.listen({
     host: "0.0.0.0",
     port: env.PORT
-}).then(server => { console.log(`HTTP server running at ${server}`) });
+}).then(server => { 
+    wss.on('connection', function connection(ws) {
+        console.log("oi")
+        
+        ws.on('error', console.error);
+        
+        ws.on('message', function message(data, isBinary) {
+            wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(data, { binary: isBinary });
+            }
+            });
+        });
+    });
+
+    console.log(`HTTP server running at ${server}`)
+    console.log(`WS server running at ${server}`)
+});
