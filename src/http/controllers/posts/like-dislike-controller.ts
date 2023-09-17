@@ -12,7 +12,6 @@ export async function likeDislikeController(req: FastifyRequest, res: FastifyRep
     })
 
     const { id } = likeDislikeValidationSchema.parse(req.params)
-    console.log(id);
 
     try {
         const likesRepository = new PrismaLikesRepository()
@@ -24,17 +23,7 @@ export async function likeDislikeController(req: FastifyRequest, res: FastifyRep
 
         const { isLiked } = await likeDislikeUseCase.handle({ postId: id, userId })
 
-        const resBody = isLiked ? 
-            {
-                message: "You dislike the post!",
-                code: 204
-            } : 
-            {
-                message: "You like the post!",
-                code: 201
-            }
-
-        return res.status(resBody.code).send({ message: resBody.message })
+        return res.status(201).send({ isLiked })
     } catch (error) {
         if (error instanceof PostNotFoundError) {
             return res.status(400).send({ message: error.message })
