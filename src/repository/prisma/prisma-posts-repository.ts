@@ -8,6 +8,7 @@ export class PrismaPostsRepository implements IPostsRepository {
         const posts = await prisma.post.findMany({
             include: {
                 user: true,
+                likes: true,
                 _count: {
                     select: {
                         likes: true
@@ -15,6 +16,7 @@ export class PrismaPostsRepository implements IPostsRepository {
                 }
             }
         });
+
         return posts;
     }
 

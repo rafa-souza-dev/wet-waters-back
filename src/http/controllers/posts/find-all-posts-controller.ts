@@ -23,12 +23,16 @@ export async function findAllPostsController(request: FastifyRequest, response: 
             _count: z.object({
                 likes: z.number(),
             }).transform(count => count.likes),
+            likes: z.array(z.object({
+                user_id: z.number(),
+                post_id: z.number()
+            }))
         }));
 
     const treatiesPosts = postsSchema.parse(posts);
 
     const retrievedPosts = treatiesPosts.map(({ _count, ...rest }) => ({
-        likes: _count, ...rest
+        likes_count: _count, ...rest
     }));
 
     return response.send({ posts: retrievedPosts });
