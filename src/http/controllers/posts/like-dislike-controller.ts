@@ -25,7 +25,7 @@ export async function likeDislikeController(req: FastifyRequest, res: FastifyRep
 
         return res.status(201).send({ isLiked })
     } catch (error) {
-        if (error instanceof PostNotFoundError) {
+        if (error instanceof Error) {
             return res.status(400).send({ message: error.message })
         }
     }
