@@ -26,16 +26,16 @@ beforeEach(() => {
             {
                 id: 1,
                 avatar_url: "",
-                email: "juvenal@gmail.com",
-                google_id: "",
+                github_id: "",
+                role: 'USER',
                 point: 0,
                 username: "juvenal"
             },
             {
                 id: 2,
                 avatar_url: "",
-                email: "joao@gmail.com",
-                google_id: "",
+                github_id: "",
+                role: 'USER',
                 point: 0,
                 username: "joao"
             },
@@ -76,7 +76,7 @@ describe("Like or dislike Use Case", () => {
 
         expect(isLiked).toBe(false)
         expect(data.likes.length).toBe(1)
-        expect(data.users[0].point).toBe(5)
+        expect(data.users[1].point).toBe(5)
     })
 
     it("should be able to remove 5 points for publisher after delete a like", async () => {
