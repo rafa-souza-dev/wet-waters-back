@@ -1,9 +1,7 @@
-import { supabase } from "../../infra/supabase";
 import { CreateAnimalUseCaseRequest, CreateAnimalUseCaseResponse } from "./dtos";
 import { ErrorAnimalAlreadyExists } from "./errors";
 import { IAnimalsRepository } from "../../repository/i-animals-repository";
-import { generateFileName, generateRandomFileName } from "../../utils/file";
-import { MultipartFile } from "@fastify/multipart";
+import { persistBase64Image, persistMultipartImage } from "../../infra/supabase/upload";
 
 export class CreateAnimalUseCase {
     constructor(private animalRepository: IAnimalsRepository) { }
@@ -24,8 +22,8 @@ export class CreateAnimalUseCase {
         }
 
         const url_image = typeof fileData === "string" ? 
-            await this.persistBase64Image(fileData) :
-            await this.persistMultipartImage(fileData)
+            await persistBase64Image('animals', fileData) :
+            await persistMultipartImage('animals', fileData)
 
         const connectCauses = threat_causes.map(cause => ({
             where: {
@@ -49,44 +47,5 @@ export class CreateAnimalUseCase {
         });
 
         return { animal };
-    }
-
-    private async persistMultipartImage(fileData: MultipartFile) {
-        const fileName = generateFileName(fileData.mimetype)
-
-        await supabase.storage.from("balde-de-agua").upload(`animals/${fileName}`, fileData.file, {
-            duplex: 'half',
-            contentType: fileData.mimetype
-        })
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => {
-            console.log(err)
-        })
-
-        const imageBasePath = "https://ypohusdowusoohwgyplu.supabase.co/storage/v1/object/public/balde-de-agua/animals/"
-
-        return imageBasePath + fileName
-    }
-
-    private async persistBase64Image(fileBase64Data: string) {
-        const imageData = Buffer.from(fileBase64Data, "base64")
-        const fileName = generateRandomFileName()
-
-        await supabase.storage.from("balde-de-agua").upload(`animals/${fileName}`, imageData, {
-            duplex: 'half',
-            contentType: "jpeg"
-        })
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => {
-            console.log(err)
-        })
-
-        const imageBasePath = "https://ypohusdowusoohwgyplu.supabase.co/storage/v1/object/public/balde-de-agua/animals/"
-
-        return imageBasePath + fileName
     }
 }

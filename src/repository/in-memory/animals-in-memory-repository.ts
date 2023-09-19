@@ -30,7 +30,7 @@ export class AnimalsInMemoryRepository implements IAnimalsRepository, IInMemoryR
             url_image
         })
 
-        return this.data.animals[id]
+        return this.data.animals[id - 1]
     }
 
     async findById(animalId: number) {
