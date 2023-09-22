@@ -9,16 +9,18 @@ export class PostsInMemoryRepository implements IPostsRepository, IInMemoryRepos
     ) {}
 
     async create(postDto: Prisma.PostUncheckedCreateInput) {
+        const id = this.data.posts.length + 1
+
         this.data.posts.push({
-            id: this.data.posts.length + 1,
+            id: id,
             description: postDto.description,
             published_at: postDto.published_at === undefined ? null : new Date(postDto.published_at!),
             title: postDto.title,
             url_image: postDto.url_image === undefined ? null : postDto.url_image,
-            user_id: postDto.user_id === undefined ? null : postDto.user_id
+            user_id: postDto.user_id
         })
         
-        return this.data.posts[this.data.posts.length]
+        return this.data.posts[id - 1]
     }
 
     async delete(postId: number) {
