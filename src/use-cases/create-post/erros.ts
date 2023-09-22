@@ -3,9 +3,3 @@ export class ErrorUploadImage extends Error {
         super("Error upload image!")
     }
 }
-
-export class ErrorUserNotFound extends Error {
-    constructor() {
-        super("User not found!")
-    }
-}
