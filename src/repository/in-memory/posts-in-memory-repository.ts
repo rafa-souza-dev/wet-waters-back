@@ -28,7 +28,7 @@ export class PostsInMemoryRepository implements IPostsRepository, IInMemoryRepos
     }
 
     async filterManyByTitle(title: string) {
-        return this.data.posts.filter(post => post.title.includes(title))
+        return this.data.posts.filter(post => post.title.toUpperCase().includes(title.toUpperCase()))
     }
 
     async findAll() {
