@@ -7,6 +7,7 @@ import fastifyMultipart from "@fastify/multipart";
 import { env } from "./env";
 import { postsRouter } from "./http/posts-routes";
 import { authRoutes } from "./http/auth-router";
+import { threatCausesRouter } from "./http/threat-causes-router";
 
 const app = fastify()
 
@@ -35,6 +36,10 @@ app.register(animalsRouter, {
 })
 
 app.register(postsRouter, {
+    prefix: "api/"
+})
+
+app.register(threatCausesRouter, {
     prefix: "api/"
 })
 
