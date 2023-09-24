@@ -3,7 +3,7 @@ import { z } from "zod";
 import { PrismaPostsRepository } from "../../../repository/prisma/prisma-posts-repository";
 import { CreatePostUseCase } from "../../../use-cases/create-post/create-post-use-case";
 import { PrismaUsersRepository } from "../../../repository/prisma/prisma-users-repository";
-import { ErrorUserNotFound } from "../../../use-cases/create-post/erros";
+import { UserNotFoundError } from "../../../use-cases/global-errors";
 
 export async function createPostController(request: FastifyRequest, response: FastifyReply) {
     const createPostValidationSchema = z.object({
@@ -51,7 +51,7 @@ export async function createPostController(request: FastifyRequest, response: Fa
             }
         });
     } catch (error) {
-        if (error instanceof ErrorUserNotFound) {
+        if (error instanceof UserNotFoundError) {
             return response.code(404).send({
                 message: error.message
             });
