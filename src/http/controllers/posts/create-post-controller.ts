@@ -14,7 +14,6 @@ export async function createPostController(request: FastifyRequest, response: Fa
 
     const { title, description, image } = createPostValidationSchema.parse(request.body);
 
-
     try {
         const prismaPostsRepository = new PrismaPostsRepository();
         const prismaUsersRepository = new PrismaUsersRepository();
@@ -38,12 +37,7 @@ export async function createPostController(request: FastifyRequest, response: Fa
         });
 
         const { _count: likes, ...rest } = postSchema.parse(post);
-        console.log({
-            post: {
-                likes,
-                ...rest
-            }
-        });
+
         return response.status(201).send({
             post: {
                 likes,
