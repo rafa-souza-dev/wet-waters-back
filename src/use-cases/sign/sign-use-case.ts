@@ -1,46 +1,14 @@
-import axios from "axios";
 import { IUsersRepository } from "../../repository/i-users-repository";
-import { z } from "zod";
 import { SignUseCaseRequest, SignUseCaseResponse } from "./dtos";
-import { env } from "../../env";
+import { getAccessToken } from "../../infra/github/access-token";
+import { getProfile } from "../../infra/github/profile";
 
 export class SignUseCase {
     constructor(private userRepository: IUsersRepository) {}
 
     async handle({ code }: SignUseCaseRequest): Promise<SignUseCaseResponse> {
-        const accessTokenResponse = await axios.post(
-            "https://github.com/login/oauth/access_token",
-            null,
-            {
-                params: {
-                    client_id: env.GITHUB_CLIENT_ID,
-                    client_secret: env.GITHUB_CLIENT_SECRET,
-                    code
-                },
-                headers: {
-                    Accept: "application/json"
-                }
-            }
-        );
-
-        const { access_token } = accessTokenResponse.data;
-
-        const userResponse = await axios.get('https://api.github.com/user', {
-            headers: {
-                Authorization: `Bearer ${access_token}`
-            }
-        });
-
-        console.log(userResponse.data);
-
-        const userSchema = z.object({
-            id: z.number(),
-            login: z.string(),
-            name: z.string(),
-            avatar_url: z.string().url()
-        });
-
-        const userInfo = userSchema.parse(userResponse.data);
+        const access_token = await getAccessToken(code)
+        const userInfo = await getProfile(access_token)
 
         let user = await this.userRepository.findByGithubId(userInfo.id.toString());
 
