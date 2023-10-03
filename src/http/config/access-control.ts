@@ -2,22 +2,63 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { PrismaUsersRepository } from "../../repository/prisma/prisma-users-repository";
 import { EnumRole } from "@prisma/client";
 
-export async function accessControl(request: FastifyRequest, response: FastifyReply) {
+type MethodHTTP =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "PATCH"
+  | "DELETE"
+  | "HEAD"
+  | "CONNECT"
+  | "OPTIONS"
+  | "TRACE";
+const METHODS: MethodHTTP[] = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "HEAD",
+  "CONNECT",
+  "OPTIONS",
+  "TRACE",
+];
 
-    const ADMIN_ROUTES: string[] = []
+export async function accessControl(
+  request: FastifyRequest,
+  response: FastifyReply
+) {
 
-    const repository = new PrismaUsersRepository();
-    if (request.routerPath !== "/api/auth/register") {
-        await request.jwtVerify();
-        const user = await repository.findById(Number(request.user.sub));
+  permissionAll("/api/auth/register");
+  permission("/api/v1/animals", ["ADMIN"], ["POST"]);
+  permission("/api/v2/animals", ["ADMIN"], ["POST"]);
 
-        if (!user) {
-            return response.send({ message: 'User not found.' }).status(401)
-        }
+  function permission(
+    route: string,
+    roles: EnumRole[],
+    _methods: MethodHTTP[] = METHODS
+  ) {
+    const routeRegExp = new RegExp("^" + route.replaceAll("/**", "(/w)?"));
 
-        if (ADMIN_ROUTES.includes(request.routerPath) && user.role !== EnumRole.ADMIN) {
-            return response.send({ message: 'User not authorized.' }).status(403)
-        }
-        
+    if (
+      routeRegExp.test(request.routerPath) &&
+      _methods.includes(request.routerMethod as MethodHTTP) &&
+      !roles.includes(request.user.role)
+    ) {
+      return response.send({ message: "User not authorized." }).status(403);
     }
-}
+  }
+
+  async function permissionAll(route: string) {
+    const routeRegExp = new RegExp("^" + route.replaceAll("/**", "(/w)?"));
+    if (!routeRegExp.test(request.routerPath)) {
+      await request.jwtVerify();
+      const repository = new PrismaUsersRepository();
+      const user = await repository.findById(Number(request.user.sub));
+
+      if (!user) {
+        return response.send({ message: "User not found." }).status(401);
+      }
+    }
+  }
+};
