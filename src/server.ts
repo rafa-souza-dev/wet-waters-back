@@ -8,6 +8,7 @@ import { env } from "./env";
 import { postsRouter } from "./http/posts-routes";
 import { authRoutes } from "./http/auth-router";
 import { threatCausesRouter } from "./http/threat-causes-router";
+import { accessControl } from "./http/config/access-control";
 
 const app = fastify()
 
@@ -21,11 +22,7 @@ app.register(jwt, {
     secret: env.SECRET_KEY,
 });
 
-app.addHook('preHandler', async (request) => {
-    if (request.routerPath !== "/api/auth/register") {
-        await request.jwtVerify();
-    }
-});
+app.addHook('preHandler', accessControl);
 
 app.register(authRoutes, {
     prefix: "api/"
