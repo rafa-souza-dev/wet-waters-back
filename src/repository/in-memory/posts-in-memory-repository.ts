@@ -52,4 +52,8 @@ export class PostsInMemoryRepository implements IPostsRepository, IInMemoryRepos
 
         return post
     }
+
+    async findAllPostInAnalysis() {
+        return this.data.posts.filter(post => post.published_at === null)
+    }
 }

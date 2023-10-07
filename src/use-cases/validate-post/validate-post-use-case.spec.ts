@@ -8,11 +8,13 @@ import { InMemoryData } from '../../@types/in-memory-data'
 import { ValidatePostUseCase } from './validate-post-use-case'
 import { PostsInMemoryRepository } from '../../repository/in-memory/posts-in-memory-repository'
 import { UsersInMemoryRepository } from '../../repository/in-memory/users-in-memory-repository'
+import { IPostsRepository } from '../../repository/i-posts-repository'
+import { IUsersRepository } from '../../repository/i-users-repository'
 
 let data: InMemoryData
 let useCase: ValidatePostUseCase
-let postsRepository: PostsInMemoryRepository
-let usersRepository: UsersInMemoryRepository
+let postsRepository: IPostsRepository
+let usersRepository: IUsersRepository
 
 beforeEach(() => {
     data = {
