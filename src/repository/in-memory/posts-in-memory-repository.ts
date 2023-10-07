@@ -38,4 +38,18 @@ export class PostsInMemoryRepository implements IPostsRepository, IInMemoryRepos
     async findById(postId: number) {
         return this.data.posts.find(post => post.id === postId) || null
     }
+
+    async update(postId: number, data: Prisma.PostUncheckedUpdateInput) {
+        const posts = this.data.posts
+        const post = posts[postId - 1]
+
+        post.description = data.description ? String(data.description) : post.description
+        post.published_at = data.published_at ? new Date(String(data.published_at)) : post.published_at
+        post.title = data.title ? String(data.title) : post.title
+        post.url_image = data.url_image ? String(data.url_image) : post.url_image
+
+        this.data.posts[postId - 1] = post
+
+        return post
+    }
 }

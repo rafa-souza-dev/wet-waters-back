@@ -6,4 +6,5 @@ export interface IPostsRepository {
     findById: (postId: number) => Promise<Post | null>;
     delete: (postId: number) => Promise<void>;
     filterManyByTitle: (title: string) => Promise<Post[]>;
+    update: (postId: number, data: Prisma.PostUncheckedUpdateInput) => Promise<Post>;
 }
