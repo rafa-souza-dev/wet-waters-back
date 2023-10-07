@@ -40,7 +40,8 @@ export async function accessControl(
 
     permission("/api/v1/animals", ["ADMIN"], ["POST"]);
     permission("/api/v2/animals", ["ADMIN"], ["POST"]);
-    
+    permission("/api/v1/posts/analysis", ["ADMIN"], ["GET"]);
+
   }
   
   function permission(

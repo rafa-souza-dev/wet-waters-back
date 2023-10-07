@@ -1,11 +1,17 @@
 import { Post, Prisma } from "@prisma/client";
 import { prisma } from "../../prisma";
 import { IPostsRepository } from "../i-posts-repository";
+import { isDate } from "util/types";
 
 export class PrismaPostsRepository implements IPostsRepository {
 
     async findAll(): Promise<Post[]> {
         const posts = await prisma.post.findMany({
+            where: {
+                NOT: {
+                    published_at: null
+                }
+            },
             include: {
                 user: true,
                 likes: true,
@@ -16,6 +22,16 @@ export class PrismaPostsRepository implements IPostsRepository {
                 }
             }
         });
+
+        return posts;
+    }
+
+    async findAllPostInAnalysis(): Promise<Post[]> {
+        const posts = await prisma.post.findMany({
+            where: {
+                published_at: null
+            }
+        })
 
         return posts;
     }
