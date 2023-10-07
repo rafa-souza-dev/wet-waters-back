@@ -4,10 +4,13 @@ import { findAllPostsController } from "./controllers/posts/find-all-posts-contr
 import { findByIdPostController } from "./controllers/posts/find-by-id-post-controller";
 import { filterManyByTitleController } from "./controllers/posts/filter-many-by-title-controller";
 import { likeDislikeController } from "./controllers/posts/like-dislike-controller";
+import { findAllPostsInAnalysisController } from "./controllers/posts/find-all-posts-in-analysis-controller";
 
 export async function postsRouter(app: FastifyInstance) {
 
     app.get('/v1/posts', findAllPostsController);
+
+    app.get('/v1/posts/analysis', findAllPostsInAnalysisController)
 
     app.get('/v1/posts/:id', findByIdPostController);
 
