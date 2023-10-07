@@ -1,7 +1,7 @@
 export interface ValidatePostUseCaseRequest {
     postId: number
     isValid: boolean
-    points?: 0 | 100 | 150 | 200
+    points?: number
 }
 
 export type ValidatePostUseCaseResponse = void
