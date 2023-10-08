@@ -9,6 +9,17 @@ export async function findAllPostsInAnalysisController(request: FastifyRequest, 
 
     const { posts } = await findAllPostsInAnalysisUseCase.handle();
 
-    return response.send({ posts });
+    const postsSchema = z.array(
+        z.object({
+            id: z.number(),
+            title: z.string(),
+            description: z.string().transform(description => description.substring(0, 50)),
+            url_image: z.string().or(z.null()),
+            published_at: z.date().or(z.null())
+        }));
+
+    const treatiesPosts = postsSchema.parse(posts);
+
+    return response.send({ posts: treatiesPosts });
 
 }
