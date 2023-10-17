@@ -36,7 +36,7 @@ export async function validatePostController(request: FastifyRequest, response: 
         })
     } catch (error) {
         if (error instanceof Error) {
-            return response.code(404).send({
+            return response.code(400).send({
                 message: error.message
             });
         }
